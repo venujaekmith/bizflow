@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}No business access - BizFlow{% endblock %}
+{% block content %}
+<h1>No active business access</h1>
+<p>Your account is not associated with an active business.</p>
+<p><a href="{% url 'business:logout' %}">Sign out</a></p>
+{% endblock %}

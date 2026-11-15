@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}{{ business.name }} - Gracery Shop{% endblock %}
+{% block content %}
+<h1>{{ business.name }} dashboard</h1>
+<p>Welcome, {{ request.user.first_name|default:request.user.email }}.</p>
+<p>Role: {{ membership.get_role_display }}</p>
+<h2>Products</h2>
+<ul>{% for product in product_names %}<li>{{ product }}</li>{% endfor %}</ul>
+<p>Sales today: {{ sales_today }}</p>
+{% if membership.can_manage_users %}
+<p>
+    <a href="{% url 'business:employees' business.slug %}">Employees</a> |
+    <a href="{% url 'business:settings' business.slug %}">Settings</a> |
+    <a href="{% url 'business:activity' business.slug %}">Activity</a> |
+    <a href="{% url 'business:billing' business.slug %}">Billing</a>
+</p>
+{% endif %}
+<p><a href="{% url 'business:logout' %}">Sign out</a></p>
+{% endblock %}

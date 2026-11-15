@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Platform dashboard - BizFlow{% endblock %}
+{% block content %}
+<h1>BizFlow platform dashboard</h1>
+<p>Signed in as {{ request.user.email }}</p>
+<ul>
+    <li>Total businesses: {{ business_count }}</li>
+    <li>Active businesses: {{ active_business_count }}</li>
+    <li>Pending/provisioning businesses: {{ pending_business_count }}</li>
+    <li>Subscriptions: {{ subscription_count }}</li>
+</ul>
+<h2>Platform health</h2>
+<p>Database: {{ health.database_vendor }} ({% if health.database_usable %}available{% else %}unavailable{% endif %})</p>
+<p>Debug mode: {{ health.debug }}</p>
+<p>
+    <a href="{% url 'platform:businesses' %}">Manage businesses</a> |
+    <a href="{% url 'platform:business_create' %}">Create business</a> |
+    <a href="{% url 'platform:subscriptions' %}">Subscriptions</a>
+</p>
+<h2>Recent businesses</h2>
+<ul>{% for business in recent_businesses %}<li>{{ business.name }} - {{ business.get_status_display }}</li>{% empty %}<li>No businesses.</li>{% endfor %}</ul>
+<h2>Recent activity</h2>
+<ul>{% for activity in recent_activity %}<li>{{ activity.created_at }} - {{ activity.action }}{% if activity.business %} - {{ activity.business.name }}{% endif %}</li>{% empty %}<li>No activity.</li>{% endfor %}</ul>
+{% endblock %}

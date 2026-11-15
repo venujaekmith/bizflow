@@ -1,0 +1,215 @@
+BizFlow Phase and Change Tracker
+================================
+
+Project: BizFlow
+Last updated: 2026-11-14
+
+PHASE 0 - Existing Project Analysis
+Status: COMPLETE
+Changes:
+- Inspected the initial Django scaffold and documented the target architecture.
+- Confirmed the project initially used SQLite and contained empty application scaffolds.
+- Identified the hybrid multi-tenant and isolated database architecture.
+
+PHASE 1 - Core Platform Foundation
+Status: COMPLETE
+Changes:
+- Added the central email-based User model.
+- Added Business and BusinessMembership models.
+- Added BusinessInvitation, BusinessSubscription, BusinessApplication, and AuditLog models.
+- Added registration, login, logout, password reset, and business resolution flows.
+- Added platform admin registration and access-control tests.
+- Added business-specific dashboard template routing for salonNEXT, pharmacyB, and graceryshopA.
+
+PHASE 2 - Business Provisioning System
+Status: COMPLETE
+Changes:
+- Added BusinessDatabase metadata for one database per business.
+- Added ProvisioningAttempt and ProvisioningStep tracking.
+- Added retry-safe provisioning orchestration.
+- Added PostgreSQL database creation with generated, validated database names.
+- Added configurable business database migration execution.
+- Added initial business-owner membership creation.
+- Added explicit failure handling that marks the business as FAILED.
+
+Validation
+----------
+- Django system checks passed after Phase 1.
+- Phase 1 test suite passed with 6 tests.
+- Phase 2 test suite passed with 8 tests.
+- Migration consistency checks passed.
+- Django system checks passed after Phase 2.
+
+Known limitations
+-----------------
+- Phase 2 requires the central platform database to run on PostgreSQL.
+- PostgreSQL credentials are supplied through Django database configuration and are not stored in BusinessDatabase.
+- Asynchronous workers and production secret management are not implemented yet.
+- Business-specific migration labels must be configured with BUSINESS_MIGRATION_APPS.
+- Database cleanup after a partial external failure requires an operational retry/cleanup process.
+
+PHASE 3 - Business Application Architecture
+Status: COMPLETE
+Changes:
+- Added a reusable business application registry.
+- Added registered application metadata for salonNEXT, pharmacyB, and graceryshopA.
+- Added per-business dashboard dispatch through the registered application.
+- Added database context and routing helpers for isolated business databases.
+- Added a complete salonNEXT example with Customer and Appointment models.
+- Added salonNEXT URLs, dashboard view, template metrics, and migration.
+- Added migration rules that keep business application tables out of the platform database.
+
+Validation
+----------
+- Django system checks passed after Phase 3.
+- Phase 3 test suite passed with 8 tests.
+- Migration consistency checks passed.
+
+PHASE 4 - Business Dashboard and User Management
+Status: COMPLETE
+Changes:
+- Added business-scoped employee listing and creation.
+- Added employee deactivation limited to the selected business membership.
+- Added employee role assignment with owner-role protection.
+- Added employee invitations and invitation acceptance.
+- Added business settings for display name, timezone, currency, and enabled modules.
+- Added recent business activity log views and administrative audit entries.
+- Added custom business roles and membership links for future permission expansion.
+- Added management navigation to the generic and salonNEXT dashboards.
+
+Validation
+----------
+- Django system checks passed after Phase 4.
+- Phase 4 test suite passed with 12 tests.
+- Migration consistency checks passed.
+
+PHASE 5 - Login Redirection and Business Resolution
+Status: COMPLETE
+Changes:
+- Added centralized business resolution middleware.
+- Enforced active-user, active-membership, and active-business checks on business URLs.
+- Added session-backed multi-business selection using a POST-only selector.
+- Recorded the selected business in the authenticated session after successful authorization.
+- Preserved per-request membership checks to prevent tenant switching through URL changes.
+- Added direct URL, suspended-business, and multi-business session security tests.
+
+Validation
+----------
+- Django system checks passed after Phase 5.
+- Phase 5 regression and security tests passed with 14 tests.
+- Migration consistency checks passed.
+
+PHASE 6 - Business Customization and Reusable Modules
+Status: COMPLETE
+Changes:
+- Preserved the existing central authentication, membership, dashboard, and access controls.
+- Added separate salonNEXT Customer and Appointment models.
+- Added separate pharmacyB Medicine and Prescription models.
+- Added separate graceryshopA Product and Sale models.
+- Added business-specific admin registration, URLs, views, templates, and migrations.
+- Added demo dashboard data for all three businesses when isolated databases are not configured.
+- Added dashboard tests proving each business resolves to its own template and domain data.
+
+Validation
+----------
+- Django system checks passed after Phase 6.
+- All business application tests passed with 16 tests.
+- Migration consistency checks passed.
+
+PHASE 7 - Subscription and Billing
+Status: COMPLETE
+Changes:
+- Added configurable monthly and annual SubscriptionPlan records.
+- Extended BusinessSubscription with plan, interval, provider, and renewal metadata.
+- Added PaymentRecord history without storing card data.
+- Added provider-neutral BillingService and manual provider abstraction.
+- Added business billing page, plan changes, cancellation, and payment history.
+- Enforced access blocking for cancelled and expired subscriptions.
+- Added billing navigation to all business dashboards.
+
+Validation
+----------
+- Django system checks passed after Phase 7.
+- Full regression and billing suite passed with 18 tests.
+- Migration consistency checks passed.
+
+Next planned phase
+------------------
+PHASE 8 - Platform Administrator Dashboard
+Status: COMPLETE
+Changes:
+- Added a staff-only platform dashboard.
+- Added platform business listing and business creation.
+- Added business status management.
+- Added provisioning action and visible provisioning failures/status.
+- Added subscription and plan overview.
+- Added recent platform audit activity.
+- Added basic platform database health reporting.
+- Added staff access-control tests.
+
+Validation
+----------
+- Django system checks passed after Phase 8.
+- Full regression suite passed with 22 tests.
+- Migration consistency checks passed.
+
+Next planned phase
+------------------
+PHASE 9 - Security, Performance and Reliability
+
+ISOLATED DATABASE ACTIVATION
+Status: COMPLETE
+Changes:
+- Added environment-based PostgreSQL platform database configuration.
+- Made provisioning select the configured business application before migrations.
+- Prevented businesses without a registered application from being marked active.
+- Validated creation of a real PostgreSQL business database.
+- Validated application migration and isolated SalonNEXT customer/service writes.
+
+Validation
+----------
+- PostgreSQL 16 isolated database provisioning completed successfully.
+- A separate business database was created and marked READY.
+- SalonNEXT tables were migrated into the business database.
+- Customer and service records were written and read from the isolated database.
+- Disposable validation PostgreSQL container was removed after testing.
+
+SQLITE ISOLATED DATABASE SUPPORT
+Status: COMPLETE
+Changes:
+- Added an engine field to BusinessDatabase metadata.
+- Added one SQLite database file per business under BUSINESS_DATABASE_DIR.
+- Preserved PostgreSQL provisioning and runtime routing.
+- Applied only the selected business application migrations to SQLite databases.
+- Added explicit application validation before provisioning.
+- Updated setup documentation and troubleshooting for SQLite isolation.
+
+Validation
+----------
+- Central migration 0005_businessdatabase_engine applied successfully.
+- Provisioning regression tests passed.
+- Real SQLite provisioning reached ACTIVE/READY.
+- SalonNEXT migrations and an isolated customer write/read succeeded.
+- PostgreSQL remains the recommended production backend; SQLite is intended for local and small single-server deployments.
+
+SALONNEXT APPLICATION EXPANSION
+Status: IN PROGRESS
+Changes:
+- Added salon services with duration, price, and active status.
+- Extended appointments with service, staff assignment, and lifecycle statuses.
+- Added POS sales, sale items, receipts, discounts, and payment methods.
+- Added customer, service, appointment, POS, and sales views/templates.
+- Added salon application URL routing under the protected business route.
+- Added demo dashboard metrics for local testing without an isolated database.
+
+Validation
+----------
+- Django system checks passed.
+- Existing regression suite passed with 18 tests.
+- SalonNEXT migration consistency passed.
+
+Next application batches
+------------------------
+- Complete local demo CRUD persistence for SalonNEXT if needed.
+- Expand pharmacyB operations.
+- Expand graceryshopA operations.

@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}Sales - {{ business.name }}{% endblock %}
+{% block content %}
+<h1>Sales</h1>
+<ul>{% for sale in sales %}<li>{{ sale.receipt_number }} - {{ sale.sold_at }} - {{ sale.total }} - {{ sale.get_payment_method_display }}</li>{% empty %}<li>No sales.</li>{% endfor %}</ul>
+<p><a href="{% url 'business:salonNEXT:dashboard' business.slug %}">Back to dashboard</a></p>
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Subscriptions - BizFlow{% endblock %}
+{% block content %}
+<h1>Subscriptions</h1>
+<h2>Active plans</h2>
+<ul>{% for plan in plans %}<li>{{ plan.name }} - {{ plan.currency }} {{ plan.monthly_price }}/month</li>{% empty %}<li>No active plans.</li>{% endfor %}</ul>
+<h2>Business subscriptions</h2>
+<ul>{% for subscription in subscriptions %}<li>{{ subscription.business.name }} - {{ subscription.plan_name }} - {{ subscription.get_status_display }}</li>{% empty %}<li>No subscriptions.</li>{% endfor %}</ul>
+<p><a href="{% url 'platform:dashboard' %}">Back to platform dashboard</a></p>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Choose a business - BizFlow{% endblock %}
+{% block content %}
+<h1>Choose a business</h1>
+<ul>
+{% for membership in memberships %}
+    <li>
+        <form method="post" action="{% url 'business:select' %}">
+            {% csrf_token %}
+            <input type="hidden" name="membership_id" value="{{ membership.id }}">
+            <button type="submit">{{ membership.business.name }}</button>
+            ({{ membership.get_role_display }})
+        </form>
+    </li>
+{% endfor %}
+</ul>
+{% endblock %}

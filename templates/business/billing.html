@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Billing - {{ business.name }}{% endblock %}
+{% block content %}
+<h1>Subscription and billing</h1>
+{% if subscription %}
+<p>Plan: {{ subscription.plan_name }} ({{ subscription.get_interval_display }})</p>
+<p>Status: {{ subscription.get_status_display }}</p>
+{% else %}
+<p>No subscription is configured.</p>
+{% endif %}
+<h2>Plans</h2>
+{% for plan in plans %}
+<form method="post" action="{% url 'business:change_plan' business.slug %}">
+    {% csrf_token %}
+    <strong>{{ plan.name }}</strong>
+    <span>{{ plan.currency }} {{ plan.monthly_price }}/month or {{ plan.annual_price }}/year</span>
+    <input type="hidden" name="plan" value="{{ plan.code }}">
+    <select name="interval">
+        <option value="monthly">Monthly</option>
+        <option value="annual">Annual</option>
+    </select>
+    <button type="submit">Select plan</button>
+</form>
+{% empty %}
+<p>No active plans are available.</p>
+{% endfor %}
+{% if subscription %}
+<form method="post" action="{% url 'business:cancel_subscription' business.slug %}">
+    {% csrf_token %}<button type="submit">Cancel subscription</button>
+</form>
+{% endif %}
+<h2>Payment records</h2>
+<ul>
+{% for payment in payments %}
+    <li>{{ payment.created_at }} - {{ payment.amount }} {{ payment.currency }} - {{ payment.get_status_display }}</li>
+{% empty %}
+    <li>No payments recorded.</li>
+{% endfor %}
+</ul>
+<p><a href="{% url 'business:dashboard' business.slug %}">Back to dashboard</a></p>
+{% endblock %}

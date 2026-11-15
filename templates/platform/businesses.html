@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Businesses - BizFlow{% endblock %}
+{% block content %}
+<h1>Businesses</h1>
+<p><a href="{% url 'platform:dashboard' %}">Platform dashboard</a> | <a href="{% url 'platform:business_create' %}">Create business</a></p>
+<ul>
+{% for business in businesses %}
+    <li>
+        <strong>{{ business.name }}</strong> ({{ business.slug }}) -
+        {{ business.get_status_display }}
+        <form method="post" action="{% url 'platform:business_status' business.id %}">
+            {% csrf_token %}
+            <select name="status">
+                {% for value, label in status_choices %}
+                    <option value="{{ value }}" {% if business.status == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Update status</button>
+        </form>
+        <form method="post" action="{% url 'platform:business_provision' business.id %}">
+            {% csrf_token %}<button type="submit">Provision</button>
+        </form>
+        {% with attempt=business.provisioning_attempts.first %}
+            {% if attempt %}
+                <small>
+                    Provisioning: {{ attempt.get_status_display }}{% if attempt.current_step %} ({{ attempt.current_step }}){% endif %}
+                    {% if attempt.error_message %}<br>Error: {{ attempt.error_message }}{% endif %}
+                </small>
+            {% endif %}
+        {% endwith %}
+    </li>
+{% empty %}
+    <li>No businesses.</li>
+{% endfor %}
+</ul>
+{% endblock %}

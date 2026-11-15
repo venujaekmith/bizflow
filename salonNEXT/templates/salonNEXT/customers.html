@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block title %}Customers - {{ business.name }}{% endblock %}
+{% block content %}
+<h1>Customers</h1>
+<p><a href="{% url 'business:salonNEXT:customer_create' business.slug %}">Add customer</a></p>
+<ul>{% for customer in customers %}<li>{{ customer.name }} - {{ customer.phone }} - {{ customer.email }}</li>{% empty %}<li>No customers.</li>{% endfor %}</ul>
+<p><a href="{% url 'business:salonNEXT:dashboard' business.slug %}">Back to dashboard</a></p>
+{% endblock %}

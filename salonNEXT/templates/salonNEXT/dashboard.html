@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}{{ business.name }} - SalonNEXT{% endblock %}
+{% block content %}
+<h1>{{ business.name }} dashboard</h1>
+<p>Welcome, {{ request.user.first_name|default:request.user.email }}.</p>
+<p>Role: {{ membership.get_role_display }}</p>
+<p>Customers: {{ customer_count }}</p>
+<p>Appointments: {{ appointment_count }}</p>
+<p>Active services: {{ service_count }}</p>
+<p>Today's revenue: {{ today_revenue }}</p>
+{% if demo_mode %}<p><strong>Demo mode:</strong> connect the isolated salon database to manage live records.</p>{% endif %}
+<h2>Salon operations</h2>
+<p>
+    <a href="{% url 'business:salonNEXT:customers' business.slug %}">Customers</a> |
+    <a href="{% url 'business:salonNEXT:services' business.slug %}">Services</a> |
+    <a href="{% url 'business:salonNEXT:appointments' business.slug %}">Appointments</a> |
+    <a href="{% url 'business:salonNEXT:pos' business.slug %}">Point of sale</a> |
+    <a href="{% url 'business:salonNEXT:sales' business.slug %}">Sales</a>
+</p>
+<h2>Recent appointments</h2>
+<ul>
+{% for appointment in recent_appointments %}
+    <li>{{ appointment.starts_at }} - {{ appointment.customer.name }} - {{ appointment.service_name }} ({{ appointment.get_status_display }})</li>
+{% empty %}
+    <li>No live appointments yet.</li>
+{% endfor %}
+</ul>
+{% if membership.can_manage_users %}
+<p>
+    <a href="{% url 'business:employees' business.slug %}">Employees</a> |
+    <a href="{% url 'business:settings' business.slug %}">Settings</a> |
+    <a href="{% url 'business:activity' business.slug %}">Activity</a> |
+    <a href="{% url 'business:billing' business.slug %}">Billing</a>
+</p>
+{% endif %}
+<p><a href="{% url 'business:logout' %}">Sign out</a></p>
+{% endblock %}

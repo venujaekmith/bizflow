@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}{{ business.name }} - BizFlow{% endblock %}
+{% block content %}
+<h1>{{ business.name }}</h1>
+<p>Signed in as {{ request.user.email }}.</p>
+<p>Role: {{ membership.get_role_display }}</p>
+{% if membership.can_manage_users %}
+<p>
+    <a href="{% url 'business:employees' business.slug %}">Employees</a> |
+    <a href="{% url 'business:settings' business.slug %}">Settings</a> |
+    <a href="{% url 'business:activity' business.slug %}">Activity</a> |
+    <a href="{% url 'business:billing' business.slug %}">Billing</a>
+</p>
+{% endif %}
+<p><a href="{% url 'business:logout' %}">Sign out</a></p>
+{% endblock %}

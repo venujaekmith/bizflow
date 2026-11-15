@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Employees - {{ business.name }}{% endblock %}
+{% block content %}
+<h1>Employees</h1>
+<p><a href="{% url 'business:employee_create' business.slug %}">Add employee</a> |
+<a href="{% url 'business:invite_employee' business.slug %}">Invite employee</a></p>
+<ul>
+{% for employee in employees %}
+    <li>
+        {{ employee.user.email }} - {{ employee.get_role_display }}
+        {% if employee.is_active %}
+            <form method="post" action="{% url 'business:employee_role' business.slug employee.id %}">
+                {% csrf_token %}
+                <select name="role">
+                    {% for value, label in role_choices %}
+                        <option value="{{ value }}" {% if employee.role == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit">Update role</button>
+            </form>
+            {% if employee.role != "owner" %}
+            <form method="post" action="{% url 'business:employee_deactivate' business.slug employee.id %}">
+                {% csrf_token %}<button type="submit">Deactivate</button>
+            </form>
+            {% endif %}
+        {% else %}(inactive){% endif %}
+    </li>
+{% empty %}
+    <li>No employees found.</li>
+{% endfor %}
+</ul>
+<p><a href="{% url 'business:dashboard' business.slug %}">Back to dashboard</a></p>
+{% endblock %}
